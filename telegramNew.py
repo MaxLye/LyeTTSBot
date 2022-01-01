@@ -86,8 +86,8 @@ def formatMessage(message):
 def getSenderName(messageObject):
     name = py_.get(messageObject, "first_name")
     id = py_.get(messageObject, "id")
-    with open('NameList.json', "r") as f:
-        data = json.loads(f.read(), encoding="utf8")
+    with open('NameList.json', "r", encoding="utf8") as f:
+        data = json.loads(f.read())
         uName = py_.get(data, f"{id}", default = None)
         if uName == None:
             bot.send_message(LYE_ID, f"New User {id} : {name}")
