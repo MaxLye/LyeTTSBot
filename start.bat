@@ -1,2 +1,2 @@
-python3 ./telegram.py
+python3 ./telegramNew.py
 pause

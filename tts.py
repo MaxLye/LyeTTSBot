@@ -3,12 +3,15 @@ import sys
 from gtts import gTTS
 from pygame import mixer
 import tempfile
-def speak(sentence, lang = 'zh'):
+
+def speak(sentence, cb=None):
     with tempfile.NamedTemporaryFile(delete=True) as fp:
-        tts=gTTS(text=sentence, lang=lang)
+        tts=gTTS(text=sentence, lang='zh-TW')
         tts.save('{}.mp3'.format(fp.name))
         mixer.init()
         mixer.music.load('{}.mp3'.format(fp.name))
         mixer.music.play(1)
         while mixer.music.get_busy():
             pass
+        if cb != None:
+            cb()
