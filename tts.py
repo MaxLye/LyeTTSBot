@@ -5,8 +5,8 @@ from pygame import mixer
 import tempfile
 
 def speak(sentence, cb=None):
-    try:
-        with tempfile.NamedTemporaryFile(delete=True) as fp:
+    with tempfile.NamedTemporaryFile(delete=True) as fp:
+        try:
             tts=gTTS(text=sentence, lang='zh-TW')
             tts.save('{}.mp3'.format(fp.name))
             mixer.init()
@@ -16,6 +16,6 @@ def speak(sentence, cb=None):
                 pass
             if cb != None:
                 cb()
-    except:
-        print("TTS Error")
-        cb()
+        except:
+            print("TTS Error")
+            cb()
