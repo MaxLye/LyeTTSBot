@@ -37,10 +37,13 @@ def send_welcome(message):
 
 @bot.message_handler(commands=['help'])
 def sendHelp(message):
-    sendMessage = f"""
+    sendMessage = ""
+    spotifyMessage = f"""
 --Spotify--
 /addSong : 加入歌曲(Eg : /addSong https://open.spotify.com/track/4AvSfXWXhyX6jbSjftXnGD?si=2e0345dd42844024)
 """
+    if readSetting()["SpotifyEnabled"]:
+        sendMessage += spotifyMessage
     if checkIsAdmin(message):
         adminMessage = f"""-----ADMIN PANEL-----
 --General Commands--
@@ -101,10 +104,15 @@ def setMaxCharacterAllow(message):
 
 @bot.message_handler(commands=['addSong'])
 def addSong(message):
-    msg = py_.get(message, "text").split(" ")
-    if len(msg) > 1:
-        spotipyClient.addSong(msg[1])
-        str = f"Added song {msg[1]}" 
+    if readSetting()["SpotifyEnabled"]:
+        msg = py_.get(message, "text").split(" ")
+        if len(msg) > 1:
+            spotipyClient.addSong(msg[1])
+            str = f"Added song {msg[1]}" 
+            print(str)
+            bot.reply_to(message, str)
+    else:
+        str = f"Spotify is not enable for this bot"
         print(str)
         bot.reply_to(message, str)
 
