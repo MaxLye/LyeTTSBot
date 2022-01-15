@@ -5,8 +5,20 @@ import telebot
 import numbers
 from pydash import py_
 
-API_TOKEN = '5062560075:AAEXxlSbwTemovGJghttYYSkWuBcPBq3Lvs'
-LYE_ID = 447074722
+def readSetting():
+    with open('setting.json', "r") as f:
+        data = json.loads(f.read())
+        return data
+
+def writeSetting(key, value):
+    data = readSetting()
+    print("Write setting {} with {}".format(key, value))
+    data[key] = value
+    with open('setting.json', 'w') as f:
+        json.dump(data, f)
+
+API_TOKEN = readSetting()['API_TOKEN']
+LYE_ID = readSetting()['Owner']
 bot = telebot.TeleBot(API_TOKEN)
 lastSpeaker = None
 lastSpeakTime = 0
@@ -25,8 +37,10 @@ def send_welcome(message):
 def sendHelp(message):
     if checkIsAdmin(message):
         helpMessage = f"""
+--General Commands--
 /allowOther : 其他人使用开关（{readSetting()['allowOthers']}）
 /setTimeOverGap ： 同一个人重复发言时间间隔（{readSetting()['timeOverGap']}）
+--User Management--
 /getNameList : 取得目前可以發言名單
 /addSpeaker : 新增可以發言使用者(Ex : /addSpeaker 123456 name)
 /removeSpeaker : 刪除可以發言使用者(Ex : /removeSpeaker 123456)
@@ -69,6 +83,9 @@ def addSpeaker(message):
     if checkIsAdmin(message):
         msg = py_.get(message, "text").split(" ")
         if len(msg) > 2 and isinstance(int(msg[1]), numbers.Number):
+            str = f"Add user {msg[1]} with name {msg[2]}"
+            print(str)
+            bot.reply_to(message, str)
             writeNameList(msg[1], msg[2])
 
 @bot.message_handler(commands=['removeSpeaker'])
@@ -76,6 +93,9 @@ def removeSpeaker(message):
     if checkIsAdmin(message):
         msg = py_.get(message, "text").split(" ")
         if len(msg) > 1 and isinstance(int(msg[1]), numbers.Number):
+            str = f"Remove user {msg[1]}"
+            print(str)
+            bot.reply_to(message, str)
             writeNameList(msg[1])
         pass
 
@@ -137,18 +157,6 @@ def getSenderName(messageObject):
             name = uName
     return name
 
-def readSetting():
-    with open('setting.json', "r") as f:
-        data = json.loads(f.read())
-        return data
-
-def writeSetting(key, value):
-    data = readSetting()
-    print("Write setting {} with {}".format(key, value))
-    data[key] = value
-    with open('setting.json', 'w') as f:
-        json.dump(data, f)
-
 def readNameList():
     with open('NameList.json', "r") as f:
         data = json.loads(f.read())
@@ -157,14 +165,8 @@ def readNameList():
 def writeNameList(id, name = None):
     data = readNameList()
     if name == None:
-        str = f"Remove user {id}"
-        print(str)
-        bot.send_message(LYE_ID, str)
         py_.unset(data, f"{id}")
     else:
-        str = f"Add user {id} with name {name}"
-        print(str)
-        bot.send_message(LYE_ID, str)
         data[id] = name
     with open('NameList.json', 'w') as f:
         json.dump(data, f)
