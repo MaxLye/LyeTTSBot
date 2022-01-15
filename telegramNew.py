@@ -53,17 +53,33 @@ def setTimeOverGap(message):
 def checkIsAdmin(message):
     return py_.index_of(readSetting()["admins"], py_.get(message, 'from_user.id')) > -1
 
+@bot.message_handler(commands=['getNameList'])
+def getNameList(message):
+    if checkIsAdmin(message):
+        bot.reply_to(message,readNameList())
+
+@bot.message_handler(commands=['addSpeaker'])
+def addSpeaker(message):
+    if checkIsAdmin(message):
+        msg = py_.get(message, "text").split(" ")
+        if len(msg) > 2 and isinstance(int(msg[1]), numbers.Number):
+            writeNameList(msg[1], msg[2])
+
 @bot.message_handler(func=lambda message: True)
 def echo_message(message):
-    str = f"{getSenderName(py_.get(message, 'from_user'))}讲, {py_.get(message, 'text')}"
-    if py_.get(message, "from_user.id") != LYE_ID:
-        bot.send_message(LYE_ID, str)
-    print(str)
-    if checkIsAdmin(message) or readSetting()['allowOthers']:
-        speakArr.append(formatMessage(message))
-        speak()
+    senderName = getSenderName(py_.get(message, 'from_user'))
+    if senderName or readSetting()["allowNewUser"]:
+        str = f"{senderName}讲, {py_.get(message, 'text')}"
+        if py_.get(message, "from_user.id") != LYE_ID:
+            bot.send_message(LYE_ID, str)
+        print(str)
+        if checkIsAdmin(message) or readSetting()['allowOthers']:
+            speakArr.append(formatMessage(message))
+            speak()
+        else:
+            bot.send_message(py_.get(message, "from_user.id"),"Others speaking is not allowed, please contact A-Lye to enable")
     else:
-        bot.send_message(py_.get(message, "from_user.id"),"Others speaking is not allowed, please contact A-Lye to enable")
+        bot.send_message(py_.get(message, "from_user.id"), "Sorry, you are not allowed to speak on this bot. If this is an error, please contact A-Lye.")
 
 def speak():
     global speaking
@@ -117,6 +133,18 @@ def writeSetting(key, value):
     print("Write setting {} with {}".format(key, value))
     data[key] = value
     with open('setting.json', 'w') as f:
+        json.dump(data, f)
+
+def readNameList():
+    with open('NameList.json', 'r') as f:
+        data = json.loads(f.read())
+        return data
+
+def writeNameList(id, name):
+    data = readNameList()
+    print(f"Add user {id} with name {name}")
+    data[id] = name
+    with open('NameList.json', 'w') as f:
         json.dump(data, f)
 
 def initBot():
