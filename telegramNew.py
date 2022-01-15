@@ -13,13 +13,22 @@ lastSpeakTime = 0
 speakArr = []
 speaking = False
 
-@bot.message_handler(commands=['help', 'start'])
+@bot.message_handler(commands=['start'])
 def send_welcome(message):
     welcomeStr = """
 啊赖的Telegram\"代言人\"
 只需要吧你想说的话打进来就会被读出来
     """
     bot.reply_to(message, welcomeStr)
+
+@bot.message_handler(commands=['help'])
+def sendHelp(message):
+    if checkIsAdmin(message):
+        helpMessage = f"""
+    /allowOther : 其他人使用开关（{readSetting()['allowOthers']}）
+    /setTimeOverGap ： 同一个人重复发言时间间隔（{readSetting()['timeOverGap']}）
+        """
+        bot.reply_to(message, helpMessage)
 
 @bot.message_handler(commands=['allowOther', "allowOthers"])
 def allowOther(message):
@@ -50,8 +59,11 @@ def echo_message(message):
     if py_.get(message, "from_user.id") != LYE_ID:
         bot.send_message(LYE_ID, str)
     print(str)
-    speakArr.append(formatMessage(message))
-    speak()
+    if checkIsAdmin(message) or readSetting()['allowOthers']:
+        speakArr.append(formatMessage(message))
+        speak()
+    else:
+        bot.send_message(py_.get(message, "from_user.id"),"Others speaking is not allowed, please contact A-Lye to enable")
 
 def speak():
     global speaking
