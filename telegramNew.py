@@ -3,6 +3,7 @@ import json
 import time
 import telebot
 import numbers
+import spotipyClient
 from pydash import py_
 
 def readSetting():
@@ -44,6 +45,8 @@ def sendHelp(message):
 /getNameList : 取得目前可以發言名單
 /addSpeaker : 新增可以發言使用者(Ex : /addSpeaker 123456 name)
 /removeSpeaker : 刪除可以發言使用者(Ex : /removeSpeaker 123456)
+--Spotify--
+/addSong : 加入歌曲(Eg : /addSong https://open.spotify.com/track/4AvSfXWXhyX6jbSjftXnGD?si=2e0345dd42844024)
         """
         bot.reply_to(message, helpMessage)
 
@@ -66,6 +69,14 @@ def setTimeOverGap(message):
             timeGap = int(msg[1])
         writeSetting("timeOverGap", timeGap)
         bot.reply_to(message, f"timeOverGap set to {timeGap}")
+
+
+@bot.message_handler(commands=['addSong'])
+def addSong(message):
+    msg = py_.get(message, "text").split(" ")
+    if len(msg) > 1:
+        spotipyClient.addSong(msg[1])
+        print(f"Added song {msg[1]}")
 
 def checkIsAdmin(message):
     return py_.index_of(readSetting()["admins"], py_.get(message, 'from_user.id')) > -1
