@@ -25,8 +25,8 @@ def send_welcome(message):
 def sendHelp(message):
     if checkIsAdmin(message):
         helpMessage = f"""
-    /allowOther : 其他人使用开关（{readSetting()['allowOthers']}）
-    /setTimeOverGap ： 同一个人重复发言时间间隔（{readSetting()['timeOverGap']}）
+/allowOther : 其他人使用开关（{readSetting()['allowOthers']}）
+/setTimeOverGap ： 同一个人重复发言时间间隔（{readSetting()['timeOverGap']}）
         """
         bot.reply_to(message, helpMessage)
 

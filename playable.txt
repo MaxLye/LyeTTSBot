@@ -1,0 +1,2 @@
+https://spotipy.readthedocs.io/en/2.19.0/
+https://github.com/stypr/clubhouse-py/blob/a0aad17a42a4f391fc40eebc36e5535e629bdd9a/cli.py#L55
