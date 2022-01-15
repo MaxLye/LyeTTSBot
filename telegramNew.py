@@ -150,7 +150,7 @@ def writeSetting(key, value):
         json.dump(data, f)
 
 def readNameList():
-    with open('NameList.json', 'r') as f:
+    with open('NameList.json', "r") as f:
         data = json.loads(f.read())
         return data
 
