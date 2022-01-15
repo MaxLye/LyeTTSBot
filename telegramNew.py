@@ -27,6 +27,8 @@ def sendHelp(message):
         helpMessage = f"""
 /allowOther : 其他人使用开关（{readSetting()['allowOthers']}）
 /setTimeOverGap ： 同一个人重复发言时间间隔（{readSetting()['timeOverGap']}）
+/getNameList : 取得目前可以發言名單
+/addSpeaker : 新增可以發言使用者(Ex : /addSpeaker 123456 name)
         """
         bot.reply_to(message, helpMessage)
 
