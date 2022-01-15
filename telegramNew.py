@@ -77,6 +77,7 @@ def addSong(message):
     if len(msg) > 1:
         spotipyClient.addSong(msg[1])
         print(f"Added song {msg[1]}")
+        bot.reply_to(message, f"Added song {msg[1]}")
 
 def checkIsAdmin(message):
     return py_.index_of(readSetting()["admins"], py_.get(message, 'from_user.id')) > -1
