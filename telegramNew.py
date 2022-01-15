@@ -29,6 +29,7 @@ def sendHelp(message):
 /setTimeOverGap ： 同一个人重复发言时间间隔（{readSetting()['timeOverGap']}）
 /getNameList : 取得目前可以發言名單
 /addSpeaker : 新增可以發言使用者(Ex : /addSpeaker 123456 name)
+/removeSpeaker : 刪除可以發言使用者(Ex : /removeSpeaker 123456)
         """
         bot.reply_to(message, helpMessage)
 
@@ -58,7 +59,10 @@ def checkIsAdmin(message):
 @bot.message_handler(commands=['getNameList'])
 def getNameList(message):
     if checkIsAdmin(message):
-        bot.reply_to(message,readNameList())
+        nameList = ""
+        for key, value in readNameList().items():
+            nameList += f"{key} : {value}\n"
+        bot.reply_to(message,f"{nameList}")
 
 @bot.message_handler(commands=['addSpeaker'])
 def addSpeaker(message):
@@ -66,6 +70,14 @@ def addSpeaker(message):
         msg = py_.get(message, "text").split(" ")
         if len(msg) > 2 and isinstance(int(msg[1]), numbers.Number):
             writeNameList(msg[1], msg[2])
+
+@bot.message_handler(commands=['removeSpeaker'])
+def removeSpeaker(message):
+    if checkIsAdmin(message):
+        msg = py_.get(message, "text").split(" ")
+        if len(msg) > 1 and isinstance(int(msg[1]), numbers.Number):
+            writeNameList(msg[1])
+        pass
 
 @bot.message_handler(func=lambda message: True)
 def echo_message(message):
@@ -142,10 +154,18 @@ def readNameList():
         data = json.loads(f.read())
         return data
 
-def writeNameList(id, name):
+def writeNameList(id, name = None):
     data = readNameList()
-    print(f"Add user {id} with name {name}")
-    data[id] = name
+    if name == None:
+        str = f"Remove user {id}"
+        print(str)
+        bot.send_message(LYE_ID, str)
+        py_.unset(data, f"{id}")
+    else:
+        str = f"Add user {id} with name {name}"
+        print(str)
+        bot.send_message(LYE_ID, str)
+        data[id] = name
     with open('NameList.json', 'w') as f:
         json.dump(data, f)
 
