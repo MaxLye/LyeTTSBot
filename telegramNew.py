@@ -31,24 +31,30 @@ def send_welcome(message):
     welcomeStr = """
 啊赖的Telegram\"代言人\"
 只需要吧你想说的话打进来就会被读出来
+輸入 /help 顯示簡單指令教程
     """
     bot.reply_to(message, welcomeStr)
 
 @bot.message_handler(commands=['help'])
 def sendHelp(message):
+    sendMessage = f"""
+--Spotify--
+/addSong : 加入歌曲(Eg : /addSong https://open.spotify.com/track/4AvSfXWXhyX6jbSjftXnGD?si=2e0345dd42844024)
+"""
     if checkIsAdmin(message):
-        helpMessage = f"""
+        adminMessage = f"""-----ADMIN PANEL-----
 --General Commands--
 /allowOther : 其他人使用开关（{readSetting()['allowOthers']}）
 /setTimeOverGap ： 同一个人重复发言时间间隔（{readSetting()['timeOverGap']}）
+/setMaxCharacterAllow : 設定最長可語音長度（{readSetting()['MaxCharacterAllow']}）
+/clearMessage : 清除目前所有在佇咧中的語音
 --User Management--
 /getNameList : 取得目前可以發言名單
 /addSpeaker : 新增可以發言使用者(Ex : /addSpeaker 123456 name)
 /removeSpeaker : 刪除可以發言使用者(Ex : /removeSpeaker 123456)
---Spotify--
-/addSong : 加入歌曲(Eg : /addSong https://open.spotify.com/track/4AvSfXWXhyX6jbSjftXnGD?si=2e0345dd42844024)
-        """
-        bot.reply_to(message, helpMessage)
+"""
+        sendMessage += adminMessage
+    bot.reply_to(message, sendMessage)
 
 @bot.message_handler(commands=['allowOther', "allowOthers"])
 def allowOther(message):
@@ -58,7 +64,9 @@ def allowOther(message):
         if len(msg) > 1:
             allowOthers = True if msg[1].lower() == "true" else False
         writeSetting("allowOthers", allowOthers)
-        bot.reply_to(message, f"allowOthers set to {allowOthers}")
+        str = f"allowOthers set to {allowOthers}"
+        bot.reply_to(message, str)
+        print(str)
 
 @bot.message_handler(commands=['setTimeOverGap'])
 def setTimeOverGap(message):
@@ -68,16 +76,37 @@ def setTimeOverGap(message):
         if len(msg) > 1 and isinstance(int(msg[1]), numbers.Number):
             timeGap = int(msg[1])
         writeSetting("timeOverGap", timeGap)
-        bot.reply_to(message, f"timeOverGap set to {timeGap}")
+        str = f"timeOverGap set to {timeGap}"
+        bot.reply_to(message, str)
+        print(str)
 
+@bot.message_handler(commands=['clearMessage'])
+def clearMessage(message):
+    if checkIsAdmin(message):
+        speakArr = []
+        bot.reply_to(message,"Message cleared")
+        print("Message cleared")
+
+@bot.message_handler(commands=['setMaxCharacterAllow'])
+def setMaxCharacterAllow(message):
+    if checkIsAdmin(message):
+        maxLimit = 100
+        msg = py_.get(message, "text").split(" ")
+        if len(msg) > 1 and isinstance(int(msg[1]), numbers.Number):
+            maxLimit = int(msg[1])
+        writeSetting("MaxCharacterAllow", maxLimit)
+        str = f"MaxCharacterAllow set to {maxLimit}"
+        bot.reply_to(message, str)
+        print(str)
 
 @bot.message_handler(commands=['addSong'])
 def addSong(message):
     msg = py_.get(message, "text").split(" ")
     if len(msg) > 1:
         spotipyClient.addSong(msg[1])
-        print(f"Added song {msg[1]}")
-        bot.reply_to(message, f"Added song {msg[1]}")
+        str = f"Added song {msg[1]}" 
+        print(str)
+        bot.reply_to(message, str)
 
 def checkIsAdmin(message):
     return py_.index_of(readSetting()["admins"], py_.get(message, 'from_user.id')) > -1
@@ -120,8 +149,12 @@ def echo_message(message):
             bot.send_message(LYE_ID, str)
         print(str)
         if checkIsAdmin(message) or readSetting()['allowOthers']:
-            speakArr.append(formatMessage(message))
-            speak()
+            speakMessage = formatMessage(message)
+            if len(speakMessage) > readSetting()["MaxCharacterAllow"]:
+                bot.reply_to(message, f"Message exceeded maximum length limit of {readSetting()['MaxCharacterAllow']}")
+            else:
+                speakArr.append(speakMessage)
+                speak()
         else:
             bot.send_message(py_.get(message, "from_user.id"),"Others speaking is not allowed, please contact A-Lye to enable")
     else:
@@ -158,7 +191,7 @@ def formatMessage(message):
     return msg
 
 def getSenderName(messageObject):
-    name = py_.get(messageObject, "first_name")
+    name = py_.get(messageObject, "first_name") if readSetting()["allowNewUser"] else None
     id = py_.get(messageObject, "id")
     with open('NameList.json', "r", encoding="utf8") as f:
         data = json.loads(f.read())
