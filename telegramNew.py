@@ -3,7 +3,6 @@ import json
 import time
 import telebot
 import numbers
-import spotipyClient
 from pydash import py_
 
 def readSetting():
@@ -17,6 +16,9 @@ def writeSetting(key, value):
     data[key] = value
     with open('setting.json', 'w') as f:
         json.dump(data, f)
+
+if readSetting()["SpotifyEnabled"]:
+    import spotipyClient
 
 API_TOKEN = readSetting()['API_TOKEN']
 LYE_ID = readSetting()['Owner']
