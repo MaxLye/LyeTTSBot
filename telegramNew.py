@@ -54,6 +54,7 @@ def sendHelp(message):
 /setMaxCharacterAllow : 設定最長可語音長度（{readSetting()['MaxCharacterAllow']}）
 /clearMessage : 清除目前所有在佇咧中的語音
 /broadcast : 廣播訊息(Eg : /broadcast 訊息)
+/allowNewUser : 允许新用户开关 ({readSetting()["allowNewUser"]})
 --User Management--
 /getNameList : 取得目前可以發言名單
 /addSpeaker : 新增可以發言使用者(Ex : /addSpeaker 123456 name)
@@ -83,6 +84,18 @@ def setTimeOverGap(message):
             timeGap = int(msg[1])
         writeSetting("timeOverGap", timeGap)
         str = f"timeOverGap set to {timeGap}"
+        bot.reply_to(message, str)
+        print(str)
+
+@bot.message_handler(commands=['allowNewUser'])
+def allowNewUser(message):
+    if checkIsAdmin(message):
+        allowNewUserSpeak = False
+        msg = py_.get(message, "text").split(" ")
+        if len(msg) > 1:
+            allowNewUserSpeak = True if msg[1].lower() == "true" else False
+        writeSetting("allowNewUserSpeak", allowNewUserSpeak)
+        str = f"allowNewUserSpeak set to {allowNewUser}"
         bot.reply_to(message, str)
         print(str)
 
