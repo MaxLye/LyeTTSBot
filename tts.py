@@ -16,6 +16,6 @@ def speak(sentence, cb=None):
                 pass
             if cb != None:
                 cb()
-        except:
-            print("TTS Error")
+        except Exception as e:
+            print(f"TTS Error : {e}")
             cb()
