@@ -95,7 +95,7 @@ def allowNewUser(message):
         if len(msg) > 1:
             allowNewUserSpeak = True if msg[1].lower() == "true" else False
         writeSetting("allowNewUserSpeak", allowNewUserSpeak)
-        str = f"allowNewUserSpeak set to {allowNewUser}"
+        str = f"allowNewUserSpeak set to {allowNewUserSpeak}"
         bot.reply_to(message, str)
         print(str)
 
