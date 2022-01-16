@@ -51,6 +51,7 @@ def sendHelp(message):
 /setTimeOverGap ： 同一个人重复发言时间间隔（{readSetting()['timeOverGap']}）
 /setMaxCharacterAllow : 設定最長可語音長度（{readSetting()['MaxCharacterAllow']}）
 /clearMessage : 清除目前所有在佇咧中的語音
+/broadcast : 廣播訊息(Eg : /broadcast 訊息)
 --User Management--
 /getNameList : 取得目前可以發言名單
 /addSpeaker : 新增可以發言使用者(Ex : /addSpeaker 123456 name)
@@ -101,6 +102,17 @@ def setMaxCharacterAllow(message):
         str = f"MaxCharacterAllow set to {maxLimit}"
         bot.reply_to(message, str)
         print(str)
+
+@bot.message_handler(commands=['broadcast'])
+def broadcast(message):
+    if checkIsAdmin(message):
+        msg = py_.get(message, "text").split(" ")
+        if len(msg) > 1:
+            str = f"Broadcast Message : {msg[1]}"
+            for key, value in readNameList().items():
+                bot.send_message(key, str)
+            print(str)
+            bot.reply_to(message, str)
 
 @bot.message_handler(commands=['addSong'])
 def addSong(message):
