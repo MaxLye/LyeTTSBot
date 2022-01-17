@@ -43,6 +43,7 @@ def sendHelp(message):
     spotifyMessage = f"""
 --Spotify--
 /addSong : 加入歌曲(Eg : /addSong https://open.spotify.com/track/4AvSfXWXhyX6jbSjftXnGD?si=2e0345dd42844024)
+/getCurrentSong : 取得目前播放的歌
 """
     if readSetting()["SpotifyEnabled"]:
         sendMessage += spotifyMessage
@@ -145,11 +146,10 @@ def addSong(message):
         print(str)
         bot.reply_to(message, str)
 
-@bot.message_handler(commands=['getSongList', 'getsonglist'])
-def getSongList(message):
+@bot.message_handler(commands=['getCurrentSong', 'getcurrentsong'])
+def getCurrentSong(message):
     if readSetting()["SpotifyEnabled"]:
-        playListStr = "hi"
-        print(spotipyClient.getQueueList())
+        playListStr = spotipyClient.getCurrentPlayingSong()
         bot.reply_to(message, playListStr)
     else:
         str = f"Spotify is not enable for this bot"
@@ -193,18 +193,21 @@ def echo_message(message):
     senderName = getSenderName(py_.get(message, 'from_user'))
     if senderName or readSetting()["allowNewUser"]:
         str = f"{senderName}讲, {py_.get(message, 'text')}"
-        if py_.get(message, "from_user.id") != LYE_ID:
-            bot.send_message(LYE_ID, str)
-        print(str)
-        if checkIsAdmin(message) or readSetting()['allowOthers']:
-            speakMessage = formatMessage(message)
-            if len(speakMessage) > readSetting()["MaxCharacterAllow"]:
-                bot.reply_to(message, f"Message exceeded maximum length limit of {readSetting()['MaxCharacterAllow']}")
-            else:
-                speakArr.append(speakMessage)
-                speak()
+        if py_.get(message, 'text')[0] == "/":
+            bot.reply_to(message, "Command error")
         else:
-            bot.send_message(py_.get(message, "from_user.id"),"Others speaking is not allowed, please contact A-Lye to enable")
+            if py_.get(message, "from_user.id") != LYE_ID:
+                bot.send_message(LYE_ID, str)
+            print(str)
+            if checkIsAdmin(message) or readSetting()['allowOthers']:
+                speakMessage = formatMessage(message)
+                if len(speakMessage) > readSetting()["MaxCharacterAllow"]:
+                    bot.reply_to(message, f"Message exceeded maximum length limit of {readSetting()['MaxCharacterAllow']}")
+                else:
+                    speakArr.append(speakMessage)
+                    speak()
+            else:
+                bot.send_message(py_.get(message, "from_user.id"),"Others speaking is not allowed, please contact A-Lye to enable")
     else:
         bot.send_message(py_.get(message, "from_user.id"), "Sorry, you are not allowed to speak on this bot. If this is an error, please contact A-Lye.")
 
