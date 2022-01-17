@@ -129,15 +129,17 @@ def broadcast(message):
             print(str)
             bot.reply_to(message, str)
 
-@bot.message_handler(commands=['addSong'])
+@bot.message_handler(commands=['addSong', 'addsong'])
 def addSong(message):
     if readSetting()["SpotifyEnabled"]:
         msg = py_.get(message, "text").split(" ")
+        senderName = getSenderName(py_.get(message, 'from_user'))
         if len(msg) > 1:
             spotipyClient.addSong(msg[1])
             str = f"Added song {msg[1]}"
             print(str)
             bot.reply_to(message, str)
+            bot.send_message(LYE_ID, f"{senderName} {str}")
     else:
         str = f"Spotify is not enable for this bot"
         print(str)
