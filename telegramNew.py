@@ -145,6 +145,17 @@ def addSong(message):
         print(str)
         bot.reply_to(message, str)
 
+@bot.message_handler(commands=['getSongList', 'getsonglist'])
+def getSongList(message):
+    if readSetting()["SpotifyEnabled"]:
+        playListStr = "hi"
+        print(spotipyClient.getQueueList())
+        bot.reply_to(message, playListStr)
+    else:
+        str = f"Spotify is not enable for this bot"
+        print(str)
+        bot.reply_to(message, str)
+
 def checkIsAdmin(message):
     return py_.index_of(readSetting()["admins"], py_.get(message, 'from_user.id')) > -1
 
