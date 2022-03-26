@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path="discord.env")
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
-LOG_CHANNEL = os.getenv('DISCORD_SERVER_LOG_CHANNEL')
+TARGET_CHANNEL = os.getenv('TARGET_CHANNEL')
 
 client = discord.Client()
 lastSpeaker = None
@@ -95,10 +95,12 @@ async def on_message(message):
     if py_.get(message, 'content')[0] == "/":
         await message.channel.send("Command error")
     else:
-        print(str)
-        sendToLog(str)
-        speakMessage = formatMessage(message)
-        speakControl.speak(speakMessage)
+        channelID = py_.get(message, "channel.id")
+        if f"{channelID}" == f"{TARGET_CHANNEL}":
+            print(str)
+            sendToLog(str)
+            speakMessage = formatMessage(message)
+            speakControl.speak(speakMessage)
 
 
 client.run(TOKEN)
