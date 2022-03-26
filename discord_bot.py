@@ -69,13 +69,9 @@ def formatMessage(message):
     name = getSenderName(message)
     id = py_.get(message, "author.id")
     msg = py_.get(message, 'content')
-    print(f"Lye Debug formatMessage id : {id}")
-    print(f"Lye Debug formatMessage msg : {msg}")
-    print(f"Lye Debug formatMessage lastSpeaker1 : {lastSpeaker}")
     if not (lastSpeaker == id and isTimeWithinRange()):
         msg = f"{name}讲, {msg}"
     lastSpeaker = id
-    print(f"Lye Debug formatMessage lastSpeaker2 : {lastSpeaker}")
     lastSpeakTime = getCurrentTimeStamp()
     return msg
 

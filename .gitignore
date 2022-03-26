@@ -3,3 +3,4 @@ setting.json
 NameList.json
 .cache
 .cache-*
+discord.env

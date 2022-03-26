@@ -19,6 +19,7 @@ def writeSetting(key, value):
 
 if readSetting()["SpotifyEnabled"]:
     import spotipyClient
+    spotipyClient.init()
 
 API_TOKEN = readSetting()['API_TOKEN']
 LYE_ID = readSetting()['Owner']
@@ -259,5 +260,4 @@ TimeOverGap is {readSetting()['timeOverGap']}
     bot.send_message(LYE_ID, str)
 
 initBot()
-spotipyClient.init()
 bot.infinity_polling()
