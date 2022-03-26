@@ -1,8 +1,8 @@
-import tts
 import json
 import time
 import telebot
 import numbers
+import speakControl
 from pydash import py_
 
 def readSetting():
@@ -25,8 +25,6 @@ LYE_ID = readSetting()['Owner']
 bot = telebot.TeleBot(API_TOKEN)
 lastSpeaker = None
 lastSpeakTime = 0
-speakArr = []
-speaking = False
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
@@ -103,7 +101,6 @@ def allowNewUser(message):
 @bot.message_handler(commands=['clearMessage'])
 def clearMessage(message):
     if checkIsAdmin(message):
-        speakArr = []
         bot.reply_to(message,"Message cleared")
         print("Message cleared")
 
@@ -204,24 +201,11 @@ def echo_message(message):
                 if len(speakMessage) > readSetting()["MaxCharacterAllow"]:
                     bot.reply_to(message, f"Message exceeded maximum length limit of {readSetting()['MaxCharacterAllow']}")
                 else:
-                    speakArr.append(speakMessage)
-                    speak()
+                    speakControl.speak(speakMessage)
             else:
                 bot.send_message(py_.get(message, "from_user.id"),"Others speaking is not allowed, please contact A-Lye to enable")
     else:
         bot.send_message(py_.get(message, "from_user.id"), "Sorry, you are not allowed to speak on this bot. If this is an error, please contact A-Lye.")
-
-def speak():
-    global speaking
-    if len(speakArr) and not speaking:
-        speaking = True
-        msg = speakArr.pop(0)
-        tts.speak(msg, speakEnd)
-
-def speakEnd():
-    global speaking
-    speaking = False
-    speak()
 
 def getCurrentTimeStamp():
     return int(round(time.time() * 1000))
