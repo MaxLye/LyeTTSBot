@@ -8,7 +8,7 @@ SCOPE = "user-read-playback-state user-modify-playback-state user-read-currently
 USERNAME = '1291026324'
 CLIENT_ID = 'dc6d6e7a310444f3bf9adcf2449b515b'
 CLIENT_SECRET = 'e3aa3ab58a5045038295b1d98db9af92'
-REDIRECT_URI = 'https://md.ahlye.com/'
+REDIRECT_URI = 'https://ahlye.com/'
 
 sp = None
 
