@@ -5,3 +5,4 @@ NameList.json
 .cache-*
 discord.env
 temp.mp3
+requirements.in

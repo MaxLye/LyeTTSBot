@@ -1,0 +1,10 @@
+gTTS==2.2.3
+pygame==2.1.0
+requests==2.26.0
+urllib3==1.26.7
+pyTelegramBotAPI==4.4.0
+pydash
+spotipy
+python-dotenv
+discord.py
+playsound==1.2.2
