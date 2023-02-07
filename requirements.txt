@@ -57,7 +57,7 @@ six==1.16.0
     # via
     #   gtts
     #   spotipy
-spotipy==2.22.0
+spotipy==2.22.1
     # via -r requirements.in
 urllib3==1.26.13
     # via
