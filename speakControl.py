@@ -1,18 +1,16 @@
 import tts
-speakArr = []
-speaking = False
+from queue import Queue
 
-def speak(speakMessage = None):
-    if(speakMessage != None):
-        speakArr.append(speakMessage)
-    global speaking
-    if len(speakArr) and not speaking:
-        speaking = True
-        msg = speakArr.pop(0)
+speakQueue = Queue()
+
+
+def speak(speakMessage=None):
+    if speakMessage:
+        speakQueue.put(speakMessage)
+    if not speakQueue.empty():
+        msg = speakQueue.get()
         tts.speak(msg, speakEnd)
 
 
 def speakEnd():
-    global speaking
-    speaking = False
     speak()

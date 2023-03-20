@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
-import sys
-from gtts import gTTS
-from playsound import playsound
-import os
 
 def speak(sentence, cb=None):
-        try:
-            tts=gTTS(text=sentence, lang='zh-TW')
-            tts.save("temp.mp3")
-            playsound("temp.mp3")
+    import sys
+    import os
+    from gtts import gTTS
+    from playsound import playsound
+
+    try:
+        with open("temp.mp3", "wb") as f:
+            tts = gTTS(text=sentence, lang='zh-TW')
+            tts.write_to_fp(f)
+        playsound("temp.mp3")
+    except Exception as e:
+        print(f"TTS Error : {e}")
+    finally:
+        os.remove("temp.mp3")
+        if cb is not None:
             cb()
-        except Exception as e:
-            print(f"TTS Error : {e}")
-            cb()
-        finally:
-            os.remove("temp.mp3")
