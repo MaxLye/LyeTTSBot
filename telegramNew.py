@@ -5,7 +5,7 @@ import speakControl
 import settings
 import nameList
 from pydash import py_
-setting = settings.Settings()
+setting = settings.Settings('setting.json')
 nameLists = nameList.NameList()
 API_TOKEN = setting.read('API_TOKEN')
 LYE_ID = setting.read('Owner')

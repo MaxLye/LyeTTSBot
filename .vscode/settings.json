@@ -1,7 +1,8 @@
 {
     "cSpell.words": [
         "dotenv",
-        "pydash"
+        "pydash",
+        "telebot"
     ],
     "liveshare.accessibility.soundsEnabled": false
 }
