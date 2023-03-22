@@ -1,4 +1,5 @@
 import json
+import pydash as py_
 
 
 class Settings:
@@ -8,7 +9,10 @@ class Settings:
     def read(self, key=None):
         with open(self.fileName, "r") as f:
             data = json.load(f)
-            return data[key] if key is not None else data
+            return py_.get(data, key)
+
+    def setSendMessageCallback(self, callback):
+        self.sendMessageCB = callback
 
     def write(self, key, value):
         with open(self.fileName, "r+") as f:
@@ -25,7 +29,7 @@ class Settings:
                 if message.from_user.id in self.read("admins"):
                     handler(message)
                 else:
-                    print(f"User {message.from_user.id} is not admin")
+                    self.sendMessageCB(message.chat.id, "You are not admin")
         return decorator
 
     def isAdmin(self, userID):
